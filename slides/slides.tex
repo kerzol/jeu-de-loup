@@ -107,7 +107,7 @@
 
 \section{Intro}
 
-\begin{frame}[t]{Exemple motivant}{Jeu de loup}
+\begin{frame}[t]{Exemple motivant}{Jeu du loup}
 
   \begin{center}
     \includegraphics[width=12em]{figs/Jongensspelen_10.jpg}
@@ -257,18 +257,6 @@ Types of Reinforcement Learning:
 \end{frame}
 
 
-
-
-\section{TD-learning}
-
-\begin{frame}{TD-learning}
-  bla-bla-bla ???? really do this?
-
-  {\small \url{https://en.wikipedia.org/wiki/Temporal_difference_learning}}
-\end{frame}
-
-
-
 \section{Q-learning}
 
 \begin{frame}{Q-learning}
@@ -318,6 +306,8 @@ $\sum_{n=0}^\infty$ from 1950-th...
     [including reinforcement learning]}, using deep neural networks to
   mimic expert players, and further improving the program by learning
   from games played against itself.''
+
+  \hfill \scriptsize --- \url{https://deepmind.com/research/alphago}
 \end{frame}
 
 
@@ -362,10 +352,14 @@ $\sum_{n=0}^\infty$ from 1950-th...
 
 \section{Jeu du loup en R}
 
-\begin{frame}[t]{Jeu de loup}{en R}
+\begin{frame}[t]{Jeu du loup}{en R}
   \begin{center}
     \includegraphics[width=6em]{figs/Jongensspelen_10.jpg}
   \end{center}
+
+  Code source: \url{https://github.com/kerzol/jeu-du-loup}
+
+  \vspace{2em}
 
   \hspace*{4em}\includegraphics[width=8em]{figs/bad.png}\quad\includegraphics[width=8em]{figs/good.png}
 
@@ -388,6 +382,9 @@ $\sum_{n=0}^\infty$ from 1950-th...
   
   \vspace*{-1.5em}
   \hspace*{15em} $\uparrow$ Bien pour le loup
+
+
+
 \end{frame}
 
 
@@ -398,6 +395,7 @@ $\sum_{n=0}^\infty$ from 1950-th...
 \begin{frame}{En TP / Home work}
 
   \begin{enumerate}
+  \item Télécharger le code source : \url{https://github.com/kerzol/jeu-du-loup}
   \item Jouer avec le code
   \item Trouvez et décrire les différences entre {\tt q-loup.R} et {\tt q-loup-1.R}
   \item Pourquoi {\tt q-loup-1.R} apprend mieux le comportement cyclique du chat ?
