@@ -12,12 +12,18 @@
 \usepackage[mathscr]{euscript}
 
 \usetikzlibrary{shapes, calc, fadings, matrix, arrows, automata,
-  positioning, decorations.markings}
+  positioning, decorations.markings, decorations.pathmorphing}
 
 \usepackage{yfonts}
 
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 \newcommand{\ok}{\scalebox{2}{\color{mycolor} \ensuremath \checkmark}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\rand}{rand}
 
 \newenvironment{blockquote}{%
   \par%
@@ -139,7 +145,69 @@
 \end{frame}
 
 
-\begin{frame}{Idée l'apprentissage par renforcement}
+\begin{frame}[t]{Idée l'apprentissage par renforcement}
+
+  \centering
+
+  \vspace{4em}
+  \tikzset{
+    state/.style={
+      rectangle,
+      rounded corners,
+      draw=black, very thick,
+      minimum height=10em,
+      inner sep=5pt,
+      text centered,
+    },
+  }
+  
+
+  \begin{tikzpicture}[->,>=latex, node distance = 20em]
+    \node[state] (A) {Agent};
+
+    \node[state] (E) [right of = A] {Environnement};
+
+    \pause
+    \path
+    ([yshift=3em]E.west) 
+    edge
+    node[anchor=south,above]{état actuel}
+    ([yshift=3em]A.east)
+    ;
+
+    \pause
+    \path
+    ([yshift=1em]A.east) 
+    edge
+    node[anchor=south,above]{action}
+    ([yshift=1em]E.west)
+    ;
+
+
+    \pause
+    \path
+    ([yshift=-2em]E.west) 
+    edge[decorate, decoration = 
+    {
+      snake,
+      amplitude = 0.4ex,
+      segment length = 1em,
+      post length=0.8ex}]
+    node[anchor=south,above]{récompense}
+    ([yshift=-2em]A.east)
+    ;
+
+    \path
+    ([yshift=-4em]E.west) 
+    edge
+    node[anchor=south,above]{nouvel état}
+    ([yshift=-4em]A.east)
+    ;
+  \end{tikzpicture}
+
+  \only<6>{
+    But de l'agent : choisir les actions afin de maximiser les récompenses immediates et futures
+  }
 
 \end{frame}
 
@@ -210,80 +278,225 @@ Olivier Sigaud et  Olivier Buffet
 \end{frame}
 
 
-\begin{frame}{draft}
-  Markov Decision Process (MDP)
-  
-  Finite and small are easy. (better than bruteforce???)
-  
-  But large and (infinity) are difficult.
-  How to explore?
-  
-  ballance between explorations and actions
-  
-  Q-learning is an exemple of a stochastic approximation algorithm
-\end{frame}
-
-
 \section{Théorie}
 
-\begin{frame}{Definitions}
-  $S$ est un ensemble d'états
-
-  $A$ est un ensemble d'actions
-
-  $\Pi : S \to A$ est une politique
-
-  rules of transitioning between states;
+\begin{frame}{Processus de décision markovien (MDP)}
   
-  rules that determine the scalar immediate reward of a transition;
+  \begin{center}
+    \tiny
+    \tikzset{
+      state/.style={
+        rectangle,
+        rounded corners,
+        draw=black, very thick,
+        minimum height=10em,
+        inner sep=5pt,
+        text centered,
+      },
+    }  
+    \begin{tikzpicture}[->,>=latex, node distance = 20em]
+      \node[state] (A) {Agent};
+      
+      \node[state] (E) [right of = A] {Environnement};
+      
+      \path
+      ([yshift=3em]E.west) 
+      edge
+      node[anchor=south,above]{état actuel}
+      ([yshift=3em]A.east)
+      ;
+      
+      \path
+      ([yshift=1em]A.east) 
+      edge
+      node[anchor=south,above]{action}
+      ([yshift=1em]E.west)
+      ;
+      
+      
+      \path
+      ([yshift=-2em]E.west) 
+      edge[decorate, decoration =
+      {
+        snake,
+        amplitude = 0.4ex,
+        segment length = 1em,
+        post length=0.8ex}]    
+      node[anchor=south,above]{récompense}
+      ([yshift=-2em]A.east)
+      ;
+      
+      \path
+      ([yshift=-4em]E.west) 
+      edge
+      node[anchor=south,above]{nouvel état}
+      ([yshift=-4em]A.east)
+      ;
+    \end{tikzpicture}
 
-  and rules that describe what the agent observes.
-  
-  TODO: cite some books
+    But de l'agent : choisir les actions afin de maximiser les récompenses immediates et futures
+  \end{center}
+
+  \begin{block}{Definitions}
+    \begin{itemize}
+    \item $S$ --- ensemble (fini) d'états
+    \item $A$ --- ensemble (fini) d'actions
+    \item $\Pr [s'|s,a]$ --- probabilité de se retrouver dans l'état $s'$ en
+      faisant l'action $a$ dans l'état $s$
+    \item $R : S \times A \times S \to \R$ --- fonction de récompense
+      (bornee par une constante)
+    \end{itemize}
+  \end{block}
+
+
 \end{frame}
 
-\begin{frame}
 
-{\bf !!! Q-Learning is an Off-Policy algorithm for Temporal Difference learning!!!}
+\begin{frame}[fragile]{Processus de décision markovien (MDP)}
 
-Types of Reinforcement Learning:
-\begin{enumerate}
-\item Bruteforce
-\item TD-learning
-\item Q-learning
-\item Bellman equation ?
-\item other stuff
-\end{enumerate}
+  {
+    \scriptsize
+    \begin{block}{Definitions}
+      \begin{itemize}
+      \item $S$ --- ensemble (fini) d'états
+      \item $A$ --- ensemble (fini) d'actions
+      \item $\Pr [s'|s,a]$ --- probabilité de se retrouver dans l'état $s'$ en
+        faisant l'action $a$ dans l'état $s$ (probabilité de transition)
+      \item $R : S \times A \times S \to \R$ --- fonction de récompense
+        (bornee par une constante)
+
+      \item $\pi : S \to A$ --- politique de l'agent
+      \end{itemize}
+    \end{block}
+  }
+  
+  \begin{block}{Processus}
+    \vspace{-1.5em}
+    \small
+    $$\begin{tikzcd}[column sep = small,
+      decoration =
+      {
+        snake,
+        amplitude = 0.2ex,
+        segment length = 0.3em,
+        post length=0.8ex}]
+      s_0 \arrow{rr}{\pi(s_0)} &\arrow[decorate]{d}&
+      s_1 \arrow{rr}{\pi(s_1)} &\arrow[decorate]{d}&
+      s_2 \arrow{rr}{\pi(s_2)} &\arrow[decorate]{d}&
+      s_3 \arrow{rr}{\pi(s_3)} &\arrow[decorate]{d}& \cdots \\
+      & r_0 && r_1  && r_2 && r_3 \\
+    \end{tikzcd}
+    $$
+  \end{block}
+  \vspace{-2.5em}
+
+  Bonne politique maximise  $\sum_{n = 0}^\infty \gamma^t r_n$, $0 < \gamma < 1$
+  
+
 \end{frame}
 
 
 \section{Q-learning}
 
-\begin{frame}{Q-learning}
-    
-  \begin{multline*}
-    Q_{t+1}(s_t,a_t) = Q_t(s_t,a_t) (1 - \alpha) + \\
-                     \alpha \left( r_{t+1} + \gamma \max_a Q_t(s_{t+1},a)     \right)
-  \end{multline*}
+\begin{frame}[t]{Q-learning}
+
+  Bonne politique maximise  $\sum_{n = 0}^\infty \gamma^t r_n$, $0 < \gamma < 1$
+  \vspace{2em}
+
+  {\bf Comment trouver cette politique ?} 
+
+  Par exemple, par l'algorithme Q-learning.
+  
+  \begin{definition}
+    \begin{itemize}
+    \item  $Q : S \times A \to \R$ --- fonction qualité de l'action 
+    \item  $\pi (s) = \argmax_{a \in A} Q(s, a)$
+    \end{itemize}
+  \end{definition}
+  
+  \vspace{-1em}
+  \begin{block}{Algorithm}
+    {\bf Initialisation:} $\forall s \in S, a \in A  \quad Q_0 (s,a) \leftarrow 0$
+    \vspace{1em}
+
+    {\bf Règle de mise à jour:}
+    \vspace{-1em}\begin{multline*}
+      Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) + \\
+      \alpha_n \left( r_{n+1} + \gamma \max_a Q_n(s_{n+1},a)     \right)
+    \end{multline*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Convergence}
+
+  {
+    \scriptsize
+    \begin{block}{Algorithm}
+      $ Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) +
+        \alpha_n \left( r_{n+1} + \gamma \max_a Q_n(s_{n+1},a)     \right)$
+    \end{block}
+  }
+  
+  \begin{block}{Optimum}
+    $\mathfrak{Q}$ --- ensemble de fonctions de type $S \times A \to \R$.
+
+    $Q^* \in \mathfrak{Q}$ est une fonction t.q. $\forall Q \in
+    \mathfrak{Q}, s \in S, a \in A$ on a $Q(s,a) \le Q^* (s,a)$
+  \end{block}
+  
+  
+  \begin{block}{Théorème}
+      $Q_n$ converge converge presque sûrement vers $Q^*$ si :
+      \begin{enumerate}
+      \item $A$ et $S$ sont finis
+      \item les probabilites de transitions ne changent pas
+    \item l'agent essaie chaque action dans chaque état un nombre infini de fois
+    \item $\sum_{n=0} \alpha_n = \infty$ et $\sum_{n=0}^\infty \alpha_n^2 < \infty$
+    \item $\gamma < 1$
+    \end{enumerate}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+
+  On peut prouver l'existence de $Q^*$ en utilisant le théorème de point fixe de Banach.
+
+  \vspace{1em}
+
+  La preuve est basée sur les résultats des méthodes stochastiques des
+  années 1950 (algorithms de Robbins-Monro, Kiefer-Wolfowitz, Blume, etc)
+
+\end{frame}
+
+\begin{frame}{Exploration de l'environnement}
+  
+  \centering
+
+  Il faut agir et apprendre
+
+  \begin{block}{Alors,}
+    \begin{itemize}
+    \item parfois l'agent utilise $Q$ : $\pi (s) = \argmax_{a \in A} Q(s, a)$
+    \item parfois il agit au hasard : $\pi (s) = \rand (a \in A) $
+    \end{itemize}
+  \end{block}
+
 
 \end{frame}
 
 
-\begin{frame}{Action selection}
-\end{frame}
+\begin{frame}{Quelques remarques}
+  
+  Vitesse d'apprentissage est caractéristique très importante.
 
-\begin{frame}{Optimal policy...}
-\end{frame}
+  \vspace{1em}
 
-\begin{frame}{Convergence}
+  Dans la vie réelle les probabilites de transitions ne sont pas
+  nécessairement fixes.  Il faut apprendre toujours et donc $\alpha_t$
+  peut être constante.
 
-
-Stochastic approximation algorithms by Robbins-Monro,
-or Kiefer-Wolfowitz, Blume from 1950-th..
-
-
-
-$\sum_{n=0}^\infty$ from 1950-th...
 \end{frame}
 
 
@@ -401,7 +614,7 @@ $\sum_{n=0}^\infty$ from 1950-th...
   \item Pourquoi {\tt q-loup-1.R} apprend mieux le comportement cyclique du chat ?
   \item Visualisez l'evolution de valeurs de $Q$
   \item Change {\tt ALPHA = 0.6} dans le code par quelque chose qui
-    respecte la condition $\sum_{i=0}^\infty \alpha_i < \infty$
+    respecte la condition $\sum_{n=0}^\infty \alpha_n < \infty$
   \item Ajouter quelques murs dans l'environnement.
   \end{enumerate}
 \end{frame}
