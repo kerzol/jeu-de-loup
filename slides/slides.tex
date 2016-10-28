@@ -20,6 +20,7 @@
 \newcommand{\ok}{\scalebox{2}{\color{mycolor} \ensuremath \checkmark}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -79,12 +80,12 @@
 
  \newcommand{\transition}[1]{
    \mode<all> {
-     \setbeamercolor{background canvas}{bg=structure.fg}
+     \setbeamercolor{background canvas}{bg=frametitle.bg}
    }
 
    \begin{frame}<handout:0>[plain,noframenumbering]
      \centering
-     \color{white}
+     \color{frametitle.fg}
      \vspace{4em}
     
      {\Huge #1}
@@ -111,7 +112,9 @@
 
 \maketitle
 
-\section{Intro}
+\section{Introduction}
+
+
 
 \begin{frame}[t]{Exemple motivant}{Jeu du loup}
 
@@ -145,7 +148,7 @@
 \end{frame}
 
 
-\begin{frame}[t]{Idée l'apprentissage par renforcement}
+\begin{frame}[t]{Idée de l'apprentissage par renforcement}
 
   \centering
 
@@ -213,6 +216,8 @@
 
 \section{Historique}
 
+\transition{Historique}
+
 \begin{frame}{Historique}
   \begin{itemize}
   \item[1988] TD-learning, Richard Sutton\hspace{1em}
@@ -258,6 +263,9 @@ Richard Ernest Bellman en 1957''
 \end{frame}
 
 
+\section{Théorie}
+\transition{Théorie}
+
 \begin{frame}{Livres}
 
 \begin{enumerate}
@@ -277,9 +285,7 @@ Olivier Sigaud et  Olivier Buffet
 \end{center}
 \end{frame}
 
-
-\section{Théorie}
-
+ 
 \begin{frame}{Processus de décision markovien (MDP)}
   
   \begin{center}
@@ -339,12 +345,13 @@ Olivier Sigaud et  Olivier Buffet
 
   \begin{block}{Definitions}
     \begin{itemize}
-    \item $S$ --- ensemble (fini) d'états
-    \item $A$ --- ensemble (fini) d'actions
-    \item $\Pr [s'|s,a]$ --- probabilité de se retrouver dans l'état $s'$ en
-      faisant l'action $a$ dans l'état $s$
+    \item $S$ --- ensemble d'états
+    \item $A$ --- ensemble d'actions
+    \item $\Pr [s'|s,a]$ --- probabilité de se retrouver dans l'état
+      $s'$ en faisant l'action $a$ dans l'état $s$ (probabilité de
+      transition)
     \item $R : S \times A \times S \to \R$ --- fonction de récompense
-      (bornee par une constante)
+    \item $\pi : S \to A$ --- politique de l'agent
     \end{itemize}
   \end{block}
 
@@ -358,13 +365,11 @@ Olivier Sigaud et  Olivier Buffet
     \scriptsize
     \begin{block}{Definitions}
       \begin{itemize}
-      \item $S$ --- ensemble (fini) d'états
-      \item $A$ --- ensemble (fini) d'actions
+      \item $S$ --- ensemble d'états
+      \item $A$ --- ensemble d'actions
       \item $\Pr [s'|s,a]$ --- probabilité de se retrouver dans l'état $s'$ en
         faisant l'action $a$ dans l'état $s$ (probabilité de transition)
       \item $R : S \times A \times S \to \R$ --- fonction de récompense
-        (bornee par une constante)
-
       \item $\pi : S \to A$ --- politique de l'agent
       \end{itemize}
     \end{block}
@@ -390,17 +395,14 @@ Olivier Sigaud et  Olivier Buffet
   \end{block}
   \vspace{-2.5em}
 
-  Bonne politique maximise  $\sum_{n = 0}^\infty \gamma^t r_n$, $0 < \gamma < 1$
+  Bonne politique maximise  $\E \sum_{n = 0}^\infty \gamma^n r_n$, $0 < \gamma < 1$
   
 
 \end{frame}
 
-
-\section{Q-learning}
-
 \begin{frame}[t]{Q-learning}
 
-  Bonne politique maximise  $\sum_{n = 0}^\infty \gamma^t r_n$, $0 < \gamma < 1$
+  Bonne politique maximise l'espérance de $\sum_{n = 0}^\infty \gamma^n r_n$
   \vspace{2em}
 
   {\bf Comment trouver cette politique ?} 
@@ -422,7 +424,7 @@ Olivier Sigaud et  Olivier Buffet
     {\bf Règle de mise à jour:}
     \vspace{-1em}\begin{multline*}
       Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) + \\
-      \alpha_n \left( r_{n+1} + \gamma \max_a Q_n(s_{n+1},a)     \right)
+      \alpha_n \left( r_n + \gamma \max_a Q_n(s_{n+1},a)     \right)
     \end{multline*}
   \end{block}
 
@@ -434,41 +436,49 @@ Olivier Sigaud et  Olivier Buffet
     \scriptsize
     \begin{block}{Algorithm}
       $ Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) +
-        \alpha_n \left( r_{n+1} + \gamma \max_a Q_n(s_{n+1},a)     \right)$
+        \alpha_n \left( r_n + \gamma \max_a Q_n(s_{n+1},a)     \right)$
     \end{block}
   }
   
-  \begin{block}{Optimum}
-    $\mathfrak{Q}$ --- ensemble de fonctions de type $S \times A \to \R$.
 
-    $Q^* \in \mathfrak{Q}$ est une fonction t.q. $\forall Q \in
-    \mathfrak{Q}, s \in S, a \in A$ on a $Q(s,a) \le Q^* (s,a)$
-  \end{block}
   
-  
-  \begin{block}{Théorème}
+  \only<1>{
+    \begin{block}{Optimum}
+      $\mathfrak{Q}$ --- ensemble de fonctions de type $S \times A \to \R$.
+      
+      $Q^* \in \mathfrak{Q}$ est une fonction t.q. $\forall Q \in
+      \mathfrak{Q}, s \in S, a \in A$ on a $Q(s,a) \le Q^* (s,a)$
+    \end{block}
+    \vspace{1em}      
+
+    {\em 
+      On peut prouver l'existence de $Q^*$ en utilisant le théorème de
+      point fixe de Banach.
+    }
+  }
+
+  \only<2> {  
+    \begin{block}{Théorème}
       $Q_n$ converge converge presque sûrement vers $Q^*$ si :
       \begin{enumerate}
       \item $A$ et $S$ sont finis
       \item les probabilites de transitions ne changent pas
-    \item l'agent essaie chaque action dans chaque état un nombre infini de fois
-    \item $\sum_{n=0} \alpha_n = \infty$ et $\sum_{n=0}^\infty \alpha_n^2 < \infty$
-    \item $\gamma < 1$
-    \end{enumerate}
-  \end{block}
+      \item l'agent essaie chaque action dans chaque état un nombre infini de fois
+      \item $\sum_{n=0} \alpha_n = \infty$ et $\sum_{n=0}^\infty \alpha_n^2 < \infty$
+      \item $\gamma < 1$
+      \end{enumerate}
+    \end{block}
+    
+    \vspace{1ex}
+    
+    {\em
+    La preuve est basée sur les idées des algorithmes itératives
+    d'optimisation stochastiques des années 1950 (algorithms de
+    Robbins-Monro, Kiefer-Wolfowitz, etc) }
+}
 
 \end{frame}
 
-\begin{frame}
-
-  On peut prouver l'existence de $Q^*$ en utilisant le théorème de point fixe de Banach.
-
-  \vspace{1em}
-
-  La preuve est basée sur les résultats des méthodes stochastiques des
-  années 1950 (algorithms de Robbins-Monro, Kiefer-Wolfowitz, Blume, etc)
-
-\end{frame}
 
 \begin{frame}{Exploration de l'environnement}
   
@@ -491,7 +501,7 @@ Olivier Sigaud et  Olivier Buffet
   
   Vitesse d'apprentissage est caractéristique très importante.
 
-  \vspace{1em}
+  \vspace{2em}
 
   Dans la vie réelle les probabilites de transitions ne sont pas
   nécessairement fixes.  Il faut apprendre toujours et donc $\alpha_t$
@@ -502,6 +512,8 @@ Olivier Sigaud et  Olivier Buffet
 
 
 \section{Applications}
+
+\transition{Applications et recherche actuelle}
 
 % Thus, reinforcement learning is particularly well suited to problems
 % which include a long-term versus short-term reward trade-off. It has
@@ -551,6 +563,18 @@ Olivier Sigaud et  Olivier Buffet
 
 \end{frame}
 
+\section{Recherche actuelle}
+
+\begin{frame}{Recherche actuelle et future}
+
+\begin{itemize}
+\item Environnements sont plus grands
+\item Il faut augmenter la vitesse de convergence
+\item Combinaison avec d'autres techniques d'apprentissage par machine
+  (les réseaux de neurones, etc)
+\end{itemize}
+\end{frame}
+
 % Le raffinement actuel des algorithmes d'apprentissage par
 % renforcement inspire les travaux des neurobiologistes et des
 % psychologues pour la compréhension du fonctionnement du cerveau et
@@ -563,7 +587,9 @@ Olivier Sigaud et  Olivier Buffet
 % en intelligence artificielle ont redécouvert en partie ce que la
 % nature avait mis des millions d'années à mettre en place.
 
-\section{Jeu du loup en R}
+\section{TP : Jeu du loup en R}
+
+\transition{En TP : Jeu du loup en R}
 
 \begin{frame}[t]{Jeu du loup}{en R}
   \begin{center}
@@ -601,10 +627,6 @@ Olivier Sigaud et  Olivier Buffet
 \end{frame}
 
 
-
-
-\section{En TP / Home work}
-
 \begin{frame}{En TP / Home work}
 
   \begin{enumerate}
@@ -620,19 +642,8 @@ Olivier Sigaud et  Olivier Buffet
 \end{frame}
 
 
-\section{Recherche actuelle}
 
-\begin{frame}{Recherche actuelle et future}
-
-\begin{itemize}
-\item Environnements sont plus grands
-\item Il faut augmenter la vitesse de convergence
-\item Combinaison avec d'autres techniques d'apprentissage par machine
-  (les réseaux de neurones, etc)
-\end{itemize}
-\end{frame}
-
-
+\transition{Merci}
 
 \end{document}
 
