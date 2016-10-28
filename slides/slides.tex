@@ -102,7 +102,7 @@
 % General presentation settings
 %--------------------------------------------------------------------------
 \title{Apprentissage par renforcement}
-\date{October 2016}
+\date{2016}
 
 \author{Sergey Kirgizov}
 
@@ -208,7 +208,7 @@
     ;
   \end{tikzpicture}
 
-  \only<6>{
+  \only<5>{
     But de l'agent : choisir les actions afin de maximiser les récompenses immediates et futures
   }
 
@@ -218,7 +218,7 @@
 
 \transition{Historique}
 
-\begin{frame}{Historique}
+\begin{frame}{Historique}{Apprentissage par renforcement}
   \begin{itemize}
   \item[1988] TD-learning, Richard Sutton\hspace{1em}
     \raisebox{-.5\height}{%
@@ -374,7 +374,8 @@ Olivier Sigaud et  Olivier Buffet
       \end{itemize}
     \end{block}
   }
-  
+
+  \vspace{-1ex}
   \begin{block}{Processus}
     \vspace{-1.5em}
     \small
@@ -395,6 +396,10 @@ Olivier Sigaud et  Olivier Buffet
   \end{block}
   \vspace{-2.5em}
 
+  $s_n$ --- état à la $n$-ième iteration
+
+  $r_n$ --- $n$-ième récompense
+  
   Bonne politique maximise  $\E \sum_{n = 0}^\infty \gamma^n r_n$, $0 < \gamma < 1$
   
 
@@ -423,12 +428,18 @@ Olivier Sigaud et  Olivier Buffet
 
     {\bf Règle de mise à jour:}
     \vspace{-1em}\begin{multline*}
-      Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) + \\
-      \alpha_n \left( r_n + \gamma \max_a Q_n(s_{n+1},a)     \right)
+      Q_{n+1}(s_n,a_n) \leftarrow (1 - \alpha_n) \cdot Q_n(s_n,a_n)  + \\
+      \alpha_n \cdot \left( r_n + \gamma \max_a Q_n(s_{n+1},a)     \right)
     \end{multline*}
   \end{block}
 
 \end{frame}
+
+
+%% TODO: EXPLIKE O TABLO
+%% keske space si alpha_n = 1 (determinist processus) 
+%% keske space si alpha_n = 0 (Q change pas)
+%% moyen iterativ http://www.heikohoffmann.de/htmlthesis/node134.html
 
 \begin{frame}[t]{Convergence}
 
@@ -459,7 +470,7 @@ Olivier Sigaud et  Olivier Buffet
 
   \only<2> {  
     \begin{block}{Théorème}
-      $Q_n$ converge converge presque sûrement vers $Q^*$ si :
+      $Q_n$ converge presque sûrement vers $Q^*$ si :
       \begin{enumerate}
       \item $A$ et $S$ sont finis
       \item les probabilites de transitions ne changent pas
@@ -498,13 +509,21 @@ Olivier Sigaud et  Olivier Buffet
 
 
 \begin{frame}{Quelques remarques}
-  
+
+  \begin{block}{Algorithm}
+    \scriptsize
+    $ Q_{n+1}(s_n,a_n) \leftarrow Q_n(s_n,a_n) (1 - \alpha_n) +
+    \alpha_n \left( r_n + \gamma \max_a Q_n(s_{n+1},a)     \right)$
+  \end{block}  
+
+  \vspace{2em}
+
   Vitesse d'apprentissage est caractéristique très importante.
 
   \vspace{2em}
 
   Dans la vie réelle les probabilites de transitions ne sont pas
-  nécessairement fixes.  Il faut apprendre toujours et donc $\alpha_t$
+  nécessairement fixes.  Il faut apprendre toujours et donc $\alpha_n$
   peut être constante.
 
 \end{frame}
