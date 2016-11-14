@@ -6,3 +6,4 @@
 
 Code and slides for my small course about reinforcement learning.
 
+Start you journey [here](test.R).
