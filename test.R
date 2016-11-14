@@ -1,9 +1,19 @@
-# source('q-loup.R') # states are differences between positions
+## First, we define how large is our environnement
 N = 5
-source('q-loup-1.R') # states are cooridnates
 
-## totally random movements, without any learning
+## then we load some files that describe behaviour of loup, chat, and related stuff
+source('q-loup-1.R') # where states are cooridnates
+## source('q-loup.R') # where states are differences between positions
+
+
+## Next, we can try to run the game, by executing the following line
+## which produces totally random movements, without any learning
 chat.move <- chat.move.random; loup.move <- loup.move.random; PROBABILITY.OF.RANDOM.ACTION = 0; main()
+
+## To stop the execution one type Ctrl-C in terminal.
+
+## Now, we are ready to read following lines, undertand and run them (In that order):
+
 
 
 ## loup moves sometimes random, sometimes not. With learning
