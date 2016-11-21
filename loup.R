@@ -86,6 +86,7 @@ chat.move.random <- function() {
 }
 chat.move <- chat.move.user
 
+
 main <- function () {
     
     ## close all graphic devices
@@ -103,12 +104,15 @@ main <- function () {
     
     while(TRUE) {
 
+        Sys.sleep(2)
+        
         ## chat and loup decides independently,
         ## they can even "jump" over, in this case loup don't eat chat
         new.chat <- chat.move()
         new.loup <- loup.move(chat, loup)
         
         chat <- chat + new.chat
+        
         ## do not cross the borders
         chat[1] <- min(N, max (1, chat[1]))
         chat[2] <- min(N, max (1, chat[2]))
@@ -118,9 +122,8 @@ main <- function () {
         loup[1] <- min(N, max (1, loup[1]))
         loup[2] <- min(N, max (1, loup[2]))
 
-        
-            
         draw.chat.and.loup (chat, loup)
+        
         total.steps <- total.steps + 1
         if (all (chat == loup)) {
             miam.steps <- miam.steps + 1
@@ -134,9 +137,10 @@ main <- function () {
         performance.history <- rbind(performance.history,
                                      c(total.steps, performance))
         
-        lines (1 + performance.history[,1]/length(performance.history[,1]) * N,
-               1 + performance.history[,2] * N,
-               col = 'violet')
+        points (1 + performance.history[,1]/length(performance.history[,1]) * N,
+                1 + performance.history[,2] * N,
+                pch=0, col = 'violet', cex=2)
+
     }
 }
 
