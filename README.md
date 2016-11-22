@@ -1,4 +1,4 @@
-# Jeu de loup
+# Jeu du loup
 
 
 <img src="slides/figs/Jongensspelen_10.jpg" height="200px">
