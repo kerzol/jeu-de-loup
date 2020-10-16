@@ -56,7 +56,7 @@ chat.move <- chat.move.cyclic; loup.move <- loup.move.Q;  PROBABILITY.OF.RANDOM.
 
 ## cyclic chat without random actions of loup
 chat <- c(4,5)
-chat.move <- chat.move.cyclic; loup.move <- loup.move.Q;  PROBABILITY.OF.RANDOM.ACTION = 0; main()
+chat.move <- chat.move.cyclic; loup.move <- loup.move.Q;  PROBABILITY.OF.RANDOM.ACTION = 0.1; main()
 
 ## user controls chat
 chat <- c(4,5)
