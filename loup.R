@@ -41,8 +41,8 @@ draw.chat.and.loup <- function (chat, loup) {
     abline(h = field, v = field)
     
     ## plot chat and loup
-    points (chat[1], chat[2], pch = '@', col = 'blue')
-    points (loup[1], loup[2], pch = 'L', col = 'red')
+    points (chat[1], chat[2], pch = '@', col = 'violet', cex = 2, font = 4)
+    points (loup[1], loup[2], pch = 'L', col = 'black', cex = 2, font = 4)
 
     chat.old <<- chat
     loup.old <<- loup
@@ -104,7 +104,7 @@ main <- function () {
     
     while(TRUE) {
 
-        Sys.sleep(0.4)
+        Sys.sleep(0.1)
         
         ## chat and loup decides independently,
         ## they can even "jump" over, in this case loup don't eat chat
@@ -139,7 +139,7 @@ main <- function () {
         
         points (1 + performance.history[,1]/length(performance.history[,1]) * N,
                 1 + performance.history[,2] * N,
-                pch=0, col = 'violet')
+                pch=1, col = 'green')
 
     }
 }
